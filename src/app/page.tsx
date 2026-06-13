@@ -95,7 +95,7 @@ export default async function Home() {
           <div className="flex flex-wrap items-center gap-4 sm:gap-6">
             <span className="font-semibold text-slate-400">Vaishnavi Bhusare</span>
             <a
-              href="https://github.com/vaishnavi-bhusare"
+              href="https://github.com/Vaish124/lumina-ai-syllabus-studio"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-indigo-400 flex items-center gap-1 transition-colors"
@@ -107,7 +107,7 @@ export default async function Home() {
               <span>GitHub Profile</span>
             </a>
             <a
-              href="https://linkedin.com/in/vaishnavi-bhusare"
+              href="https://www.linkedin.com/in/vaishnavi-bhusare-37243936a/"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-indigo-400 flex items-center gap-1 transition-colors"
