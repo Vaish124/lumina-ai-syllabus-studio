@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 
-export async function GET() {
-  return new Promise((resolve) => {
+export async function GET(): Promise<Response> {
+  return new Promise<Response>((resolve) => {
     const cmd = `powershell -Command "Get-ChildItem -Path 'c:\\Users\\Allenticspun2107\\.gemini\\antigravity\\scratch\\house-of-edtech-assignment' -Exclude node_modules, .next, .git | Compress-Archive -DestinationPath 'C:\\Users\\Allenticspun2107\\Desktop\\house-of-edtech-assignment.zip' -Force"`;
     
     exec(cmd, (error, stdout, stderr) => {
