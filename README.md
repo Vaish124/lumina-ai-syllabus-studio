@@ -1,8 +1,6 @@
 # Lumina AI Syllabus Studio
 
-![Lumina Platform Header](https://via.placeholder.com/1200x400/1e1e2e/8b5cf6?text=Lumina+AI+Syllabus+Studio)
-
-> An intelligent course creation and collaborative learning platform with AI-powered content generation and an interactive study companion for teachers and students.
+An intelligent course creation and collaborative learning platform with AI-powered content generation and an interactive study companion for teachers and students.
 
 ## 🚀 Features
 
@@ -19,104 +17,254 @@
 - **Personal Notes**: Keep persistent study notes linked to specific lessons.
 
 ## 🛠️ Technology Stack
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Database**: [Turso (LibSQL)](https://turso.tech/) + [Prisma ORM](https://www.prisma.io/)
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Database**: Turso (LibSQL) + Prisma ORM
 - **Authentication**: Custom JWT with HTTP-Only Cookies
-- **AI Integration**: [Google Generative AI (Gemini)](https://ai.google.dev/)
-- **Testing**: [Playwright](https://playwright.dev/) for E2E user flows
+- **AI Integration**: Google Generative AI (Gemini)
+- **Testing**: Playwright for E2E user flows
+- **Deployment**: Vercel + Turso
 
 ## 🚦 Getting Started
 
 ### Prerequisites
 - Node.js 18+ or 20+
-- A Turso account (or local SQLite)
-- A Google AI Studio API key (for Gemini)
+- A Turso account (free tier available at [turso.tech](https://turso.tech))
+- A Google AI Studio API key (free tier at [ai.google.dev](https://ai.google.dev))
+- Git
 
 ### Installation & Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/vaishnavi-bhusare/house-of-edtech-assignment.git
-   cd house-of-edtech-assignment
-   ```
+#### 1. Clone the repository
+```bash
+git clone https://github.com/Vaish124/lumina-ai-syllabus-studio.git
+cd lumina-ai-syllabus-studio
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+#### 2. Install dependencies
+```bash
+npm install
+```
 
-3. **Environment Variables**
-   Create a `.env` file in the root directory based on the `.env.example` structure:
-   ```env
-   # Database connection (Turso URL or local SQLite file)
-   DATABASE_URL="libsql://your-database-name.turso.io"
-   DATABASE_AUTH_TOKEN="your-turso-auth-token"
-   
-   # JWT Secret for authentication
-   JWT_SECRET="generate-a-strong-random-string-here"
-   
-   # Optional: For AI features to work server-side
-   GEMINI_API_KEY="your-google-gemini-api-key"
-   ```
+#### 3. Configure environment variables
+Copy `.env.example` to `.env` and fill in your actual values:
 
-4. **Initialize Database**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   # Optional: Seed the database with demo users and courses
-   npx prisma db seed
-   ```
+```bash
+cp .env.example .env
+```
 
-5. **Run the Development Server**
-   ```bash
-   npm run dev
-   ```
-   Navigate to [http://localhost:3000](http://localhost:3000)
+Then edit `.env` and add your credentials:
 
-## 🧪 Running Tests (Playwright)
+```env
+# Database connection (Turso)
+DATABASE_URL="libsql://your-database-name.aws-ap-south-1.turso.io"
+DATABASE_AUTH_TOKEN="your-turso-auth-token"
 
-We use Playwright to ensure the core user flows (authentication, AI curriculum generation, and student enrollment) function correctly.
+# JWT Secret for authentication (generate a strong random string)
+JWT_SECRET="your-super-secret-jwt-key"
 
-1. **Install Playwright Browsers**
-   ```bash
-   npx playwright install --with-deps
-   ```
+# Google Gemini API key (optional, required for AI features)
+GEMINI_API_KEY="your-google-gemini-api-key"
+```
 
-2. **Run E2E Tests**
-   ```bash
-   npm run test:e2e
-   ```
+**⚠️ Important**: Never commit your `.env` file to Git. It's already in `.gitignore`.
 
-3. **View Test Report**
-   ```bash
-   npx playwright show-report
-   ```
+#### 4. Initialize database
+```bash
+# Generate Prisma client
+npx prisma generate
 
-## ☁️ Deployment Guide (Vercel + Turso)
+# Push schema to database
+npx prisma db push
+
+# Optional: Seed with demo data
+npx prisma db seed
+```
+
+#### 5. Run development server
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🧪 Running Tests
+
+We use Playwright for end-to-end testing of critical user flows including authentication, course creation, AI features, and student enrollment.
+
+#### Install Playwright browsers
+```bash
+npx playwright install --with-deps
+```
+
+#### Run E2E tests
+```bash
+npm run test:e2e
+```
+
+#### View detailed test report
+```bash
+npx playwright show-report
+```
+
+#### Run tests in headed mode (see browser)
+```bash
+npx playwright test --headed
+```
+
+#### Run specific test file
+```bash
+npx playwright test e2e/auth.spec.ts
+```
+
+## ☁️ Deployment Guide
+
+### Deploy to Vercel
 
 This application is optimized for edge deployment on Vercel.
 
-1. **Database setup**: Create a database on [Turso](https://turso.tech/). Retrieve your `DATABASE_URL` and `DATABASE_AUTH_TOKEN`.
-2. **Push code to GitHub**: Ensure your code is hosted on a GitHub repository.
-3. **Deploy on Vercel**:
-   - Import your repository to Vercel.
-   - Configure the Build Command: `npm run build`
-   - Set the necessary Environment Variables:
-     - `DATABASE_URL`
-     - `DATABASE_AUTH_TOKEN`
-     - `JWT_SECRET`
-     - `GEMINI_API_KEY`
-4. **Deploy!** Vercel will automatically build the Next.js app and run Prisma schema generation.
+#### Step 1: Prepare your database
+- Create a free database on [Turso](https://turso.tech)
+- Copy your `DATABASE_URL` and `DATABASE_AUTH_TOKEN`
+
+#### Step 2: Push code to GitHub
+- Ensure your repository is public on GitHub
+- Make sure `.env` is in `.gitignore` (already done)
+
+#### Step 3: Deploy on Vercel
+1. Go to [Vercel](https://vercel.com)
+2. Click "New Project" and import your GitHub repository
+3. Configure build settings:
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `.next`
+
+#### Step 4: Set environment variables
+In Vercel project settings, add these environment variables:
+- `DATABASE_URL`
+- `DATABASE_AUTH_TOKEN`
+- `JWT_SECRET` (generate a new strong one)
+- `GEMINI_API_KEY` (optional for AI features)
+
+#### Step 5: Deploy
+Click "Deploy" and Vercel will automatically:
+- Build your Next.js application
+- Generate Prisma client
+- Deploy to edge network
+
+Your app is now live! 🎉
 
 ## 🛡️ Security Measures
-- Passwords hashed using `bcryptjs`
-- Role-based Access Control (RBAC) separating `TEACHER` and `STUDENT` routes
-- HTTP-only Secure Cookies for JWT transmission
-- React Error Boundaries for application resilience
-- Input validation utilizing `Zod` schemas
-- Gemini API Endpoint rate-limiting to prevent abuse
+
+- ✅ Passwords hashed using bcryptjs
+- ✅ Role-based Access Control (RBAC) with TEACHER and STUDENT roles
+- ✅ HTTP-only Secure Cookies for JWT transmission
+- ✅ React Error Boundaries for application resilience
+- ✅ Input validation using Zod schemas
+- ✅ Gemini API endpoint rate-limiting to prevent abuse
+- ✅ SQL injection prevention via Prisma ORM
+- ✅ CORS and security headers configured for production
+
+## 📁 Project Structure
+
+```
+lumina-ai-syllabus-studio/
+├── src/
+│   ├── app/
+│   │   ├── actions/          # Server actions (auth, courses, lessons, AI)
+│   │   ├── api/              # API routes
+│   │   ├── dashboard/        # Protected dashboard routes
+│   │   ├── layout.tsx        # Root layout with error boundary
+│   │   └── page.tsx          # Landing page
+│   ├── components/           # Reusable React components
+│   ├── lib/                  # Utilities (auth, Prisma, Gemini)
+│   └── styles/               # Global styles
+├── prisma/
+│   ├── schema.prisma         # Database schema
+│   └── seed.ts               # Database seeding script
+├── e2e/                      # Playwright E2E tests
+├── .github/workflows/        # GitHub Actions CI/CD
+├── .env.example              # Environment variables template
+└── playwright.config.ts      # Playwright configuration
+```
+
+## 🔑 Key Features in Detail
+
+### Authentication Flow
+- Users register with email, name, password, and role (Teacher/Student)
+- Passwords hashed with bcryptjs
+- JWT tokens stored in HTTP-only cookies
+- Token verified on protected routes
+
+### Teacher Workflow
+1. Create course with title, description, difficulty, duration, subject
+2. AI generates syllabus outline (optional)
+3. Create modules within course
+4. Add lessons to modules
+5. AI generates lesson content (optional)
+6. Create quiz questions for lessons
+7. Publish course for students
+
+### Student Workflow
+1. View available courses
+2. Enroll in courses
+3. Access lessons in enrolled courses
+4. Take quizzes with immediate auto-grading
+5. Chat with AI study companion for lesson clarification
+6. Create personal study notes
+
+### AI Features
+- **Syllabus Generation**: Gemini generates course structure based on topic
+- **Lesson Content**: Gemini creates detailed markdown lesson content
+- **Study Assistant**: Context-aware chat based on lesson content
+
+## 🧑‍💻 Development Tips
+
+### Making Database Changes
+```bash
+# Edit prisma/schema.prisma
+# Then push changes
+npx prisma db push
+
+# Generate client types
+npx prisma generate
+```
+
+### Debugging
+- Check server logs: `npm run dev` console
+- Check browser console for client errors
+- Use Prisma Studio: `npx prisma studio`
+
+### Adding new features
+1. Update Prisma schema if needed
+2. Create server action in `src/app/actions/`
+3. Create/update component in `src/components/`
+4. Add E2E test in `e2e/`
+
+## 📚 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Turso Documentation](https://docs.turso.tech)
+- [Google Generative AI](https://ai.google.dev)
+- [Playwright Testing](https://playwright.dev)
+
+## 📝 Assignment Information
+
+This project is submitted as part of the **House of Edtech Fullstack Developer Assignment**.
+
+- **Developer**: Vaishnavi Bhusare
+- **GitHub**: https://github.com/Vaish124/lumina-ai-syllabus-studio
+- **LinkedIn**: https://www.linkedin.com/in/vaishnavi-bhusare-37243936a/
+- **Duration**: Full-stack development project
+- **Tech Stack**: Next.js 16, TypeScript, Tailwind CSS, Prisma, Google Gemini AI
+
+## 📄 License
+
+This project is open source and available under the MIT License.
 
 ---
-Developed as part of the House of EdTech full-stack assignment.
+
+**Ready to get started?** Follow the [Getting Started](#-getting-started) section above!
