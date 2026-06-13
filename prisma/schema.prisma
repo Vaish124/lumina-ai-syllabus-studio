@@ -1,0 +1,123 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  password     String
+  name         String
+  role         String         @default("STUDENT") // "TEACHER" or "STUDENT"
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  courses      Course[]       @relation("CreatedCourses")
+  enrollments  Enrollment[]
+  quizAttempts QuizAttempt[]
+  studyNotes   StudyNote[]
+  progress     UserProgress[]
+}
+
+model Course {
+  id          String       @id @default(uuid())
+  title       String
+  description String
+  difficulty  String       @default("Intermediate") // "Beginner", "Intermediate", "Advanced"
+  duration    String       @default("4 weeks")
+  subject     String       @default("General")
+  published   Boolean      @default(false)
+  authorId    String
+  author      User         @relation("CreatedCourses", fields: [authorId], references: [id], onDelete: Cascade)
+  modules     Module[]
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Enrollment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Module {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  order       Int      @default(0)
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Lesson {
+  id         String         @id @default(uuid())
+  title      String
+  content    String         // Rich text markdown
+  objectives String         // Stringified JSON list of objectives
+  order      Int            @default(0)
+  moduleId   String
+  module     Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  quizzes    QuizQuestion[]
+  notes      StudyNote[]
+  progress   UserProgress[]
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model QuizQuestion {
+  id            String   @id @default(uuid())
+  question      String
+  options       String   // Stringified JSON list of strings
+  correctAnswer String
+  explanation   String
+  lessonId      String
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model QuizAttempt {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  score     Int
+  total     Int
+  answers   String   // Stringified JSON of user answers
+  feedback  String?  // AI-generated feedback
+  createdAt DateTime @default(now())
+}
+
+model StudyNote {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+}
